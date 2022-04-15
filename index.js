@@ -78,7 +78,7 @@ app.post('/api/persons', (request, response) => {
   const person = new Person({
     name: body.name,
     number: generateNumber(),
-    id: generateId(3),
+    id: generateId(),
   })
 
   if (person.number === undefined) {
