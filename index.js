@@ -7,7 +7,7 @@ app.use(cors())
 const Person = require('./models/person.js')
 
 const formatPerson = (person) => {
-  const formattedPerson = { ...person._doc, id: person._id }
+  const formattedPerson = { ...person._doc }
   delete formattedPerson._id
   delete formattedPerson.__v
   return formattedPerson
@@ -53,9 +53,8 @@ app.get('/api/persons', (request, response) => {
 
 const generateId = () => {
   const maxId =
-    persons.length > 0
-      ? persons
-          .map((n) => n.id)
+    Person.length > 0
+      ? Person.map((n) => n.id)
           .sort((a, b) => a - b)
           .reverse()[0]
       : 1
@@ -78,7 +77,7 @@ app.post('/api/persons', (request, response) => {
   const person = new Person({
     name: body.name,
     number: generateNumber(),
-    id: generateId(),
+    id: generateId(1),
   })
 
   if (person.number === undefined) {
@@ -117,7 +116,7 @@ app.put('/api/persons/:id', (request, response) => {
   const person = {
     name: body.name,
     number: body.number,
-    id: generateId(),
+    id: body.id,
   }
   Person.findByIdAndUpdate(request.params.id, person, { new: true })
     .then((updatedPerson) => {
