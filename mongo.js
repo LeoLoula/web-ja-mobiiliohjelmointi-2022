@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const url =
-  'mongodb+srv://leol:Y27mijefCUdoXEWJ@cluster0.rbz33.mongodb.net/phonebookapp?retryWrites=true&w=majority'
+  'mongodb+srv://<user>:<password>cluster0.rbz33.mongodb.net/phonebookapp?retryWrites=true&w=majority'
 
 mongoose.connect(url)
 
