@@ -1,10 +1,10 @@
-
 const express = require('express')
 const app = express()
 app.use(express.json())
 app.use(express.static('build'))
 const cors = require('cors')
 app.use(cors())
+const Person = require('./phonebook-cli/mongo')
 
 let persons = [
   {
@@ -38,10 +38,10 @@ app.get('/api', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
-
-
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({}).then((persons) => {
+    res.json(persons)
+  })
 })
 
 const generateId = () => {
