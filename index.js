@@ -7,7 +7,7 @@ app.use(cors())
 const Person = require('./models/person.js')
 
 const formatPerson = (person) => {
-  const formattedPerson = { ...person._doc, id: persons._id }
+  const formattedPerson = { ...person._doc, id: person._id }
   delete formattedPerson._id
   delete formattedPerson.__v
   return formattedPerson
