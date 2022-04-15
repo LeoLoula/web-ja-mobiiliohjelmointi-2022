@@ -4,14 +4,7 @@ app.use(express.json())
 app.use(express.static('build'))
 const cors = require('cors')
 app.use(cors())
-const Person = require('./models/person.js')
-
-const formatPerson = (person) => {
-  const formattedPerson = { ...person._doc, id: persons._id }
-  delete formattedPerson._id
-  delete formattedPerson.__v
-  return formattedPerson
-}
+const Person = require('./phonebook-cli/mongo')
 
 let persons = [
   {
@@ -41,13 +34,13 @@ let persons = [
   },
 ]
 
-app.get('/api', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+app.get('/api', (req, res) => {
+  res.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/persons', (request, response) => {
-  Person.find({}, { __v: 0 }).then((person) => {
-    response.json(person.map(formatPerson))
+app.get('/api/persons', (req, res) => {
+  Person.find({}).then((persons) => {
+    res.json(persons)
   })
 })
 
@@ -61,7 +54,6 @@ const generateId = () => {
       : 1
   return maxId + 1
 }
-
 const generateNumber = () => {
   return Math.floor(Math.random() * 1000000000000)
 }
@@ -75,12 +67,11 @@ app.post('/api/persons', (request, response) => {
   if (persons.map((x) => x.name).includes(body.name)) {
     return response.status(400).json({ error: 'Nimen pitää olla uniikki!' })
   }
-  const person = new Person({
+  const person = {
     name: body.name,
     number: generateNumber(),
-    id: generateId(3),
-  })
-
+    id: generateId(),
+  }
   if (person.number === undefined) {
     return response.status(400).json({ error: 'Numeroa ei löydy' })
   }
@@ -92,56 +83,26 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
 
   response.json(person)
-  person.save().then((savedPerson) => {
-    response.json(formatPerson(savedPerson))
-  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
-      response.status(204).end()
-    })
-    .catch((error) => {
-      response.status(400).send({ error: 'malformed id' })
-    })
   const id = Number(request.params.id)
   persons = persons.filter((person) => person.id !== id)
-
   response.status(204).end()
 })
 
-app.put('/api/persons/:id', (request, response) => {
-  const body = request.body
-
-  const person = {
-    name: body.name,
-    number: generateRandomInt(3),
-    id: generateId,
-  }
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then((updatedPerson) => {
-      response.json(formatPerson(updatedPerson))
-    })
-    .catch((error) => {
-      console.log(error)
-      response.status(400).send({ error: 'malformatted id' })
-    })
-})
-
 app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id)
-    .then((person) => {
-      if (person) {
-        response.json(formatPerson(person))
-      } else {
-        response.status(404).end()
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-      response.status(400).send({ error: 'malformatted id' })
-    })
+  const id = Number(request.params.id)
+  console.log(id)
+  const person = persons.find((person) => person.id === id)
+  console.log(person)
+  response.json(person)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
 })
 
 const PORT = process.env.PORT || 3001
