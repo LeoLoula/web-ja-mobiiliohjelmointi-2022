@@ -8,6 +8,7 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema({
   name: String,
   number: String,
+  id: Number,
 })
 
 const Person = mongoose.model('Person', personSchema)
@@ -15,6 +16,7 @@ const Person = mongoose.model('Person', personSchema)
 const person = new Person({
   name: process.argv[2],
   number: process.argv[3],
+  id: 2,
 })
 
 if (process.argv[2] === undefined) {
@@ -33,5 +35,3 @@ if (process.argv[2] === undefined) {
     mongoose.connection.close()
   })
 }
-
-module.exports = Person
