@@ -12,10 +12,4 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-const person = new Person({
-  name: process.argv[2],
-  number: process.argv[3],
-  id: 5,
-})
-
 module.exports = Person
